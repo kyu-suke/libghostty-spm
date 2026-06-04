@@ -145,3 +145,21 @@ public protocol TerminalSurfaceLifecycleDelegate: TerminalSurfaceViewDelegate {
     func terminalDidAttachSurface(_ surface: TerminalSurface)
     func terminalDidDetachSurface()
 }
+
+/// Surface 内検索の状態変化を受け取る delegate。
+///
+/// ghostty 内部の検索エンジン (apprt action 経由) からの通知を受け、
+/// apprt 側が検索 UI を表示・更新するために使う。
+///
+/// - `terminalDidRequestStartSearch`: ghostty が検索 UI の起動を要求。`needle` は
+///   初期検索語 (空 / nil の場合あり)。
+/// - `terminalDidRequestEndSearch`: ghostty が検索 UI の終了を要求。
+/// - `terminalDidUpdateSearchTotal`: 現在の検索結果総数の通知。
+/// - `terminalDidUpdateSearchSelected`: 現在ハイライトされているヒットの 0-based インデックスの通知。
+@MainActor
+public protocol TerminalSurfaceSearchDelegate: TerminalSurfaceViewDelegate {
+    func terminalDidRequestStartSearch(needle: String?)
+    func terminalDidRequestEndSearch()
+    func terminalDidUpdateSearchTotal(_ total: Int)
+    func terminalDidUpdateSearchSelected(_ selected: Int)
+}
