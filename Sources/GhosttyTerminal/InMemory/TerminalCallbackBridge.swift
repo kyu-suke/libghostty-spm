@@ -169,6 +169,15 @@ final class TerminalCallbackBridge {
             (delegate as? any TerminalSurfaceSearchDelegate)?
                 .terminalDidUpdateSearchSelected(Int(selected))
 
+        case GHOSTTY_ACTION_SCROLLBAR:
+            let payload = action.action.scrollbar
+            TerminalDebugLog.log(
+                .actions,
+                "callback action=scrollbar total=\(payload.total) offset=\(payload.offset) len=\(payload.len)"
+            )
+            (delegate as? any TerminalSurfaceScrollbarDelegate)?
+                .terminalDidUpdateScrollbar(total: payload.total, offset: payload.offset, len: payload.len)
+
         default:
             TerminalDebugLog.log(
                 .actions,
