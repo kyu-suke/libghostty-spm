@@ -145,3 +145,37 @@ public protocol TerminalSurfaceLifecycleDelegate: TerminalSurfaceViewDelegate {
     func terminalDidAttachSurface(_ surface: TerminalSurface)
     func terminalDidDetachSurface()
 }
+
+/// Surface 内検索の状態変化を受け取る delegate。
+///
+/// ghostty 内部の検索エンジン (apprt action 経由) からの通知を受け、
+/// apprt 側が検索 UI を表示・更新するために使う。
+///
+/// - `terminalDidRequestStartSearch`: ghostty が検索 UI の起動を要求。`needle` は
+///   初期検索語 (空 / nil の場合あり)。
+/// - `terminalDidRequestEndSearch`: ghostty が検索 UI の終了を要求。
+/// - `terminalDidUpdateSearchTotal`: 現在の検索結果総数の通知。
+/// - `terminalDidUpdateSearchSelected`: 現在ハイライトされているヒットの 0-based インデックスの通知。
+@MainActor
+public protocol TerminalSurfaceSearchDelegate: TerminalSurfaceViewDelegate {
+    func terminalDidRequestStartSearch(needle: String?)
+    func terminalDidRequestEndSearch()
+    func terminalDidUpdateSearchTotal(_ total: Int)
+    func terminalDidUpdateSearchSelected(_ selected: Int)
+}
+
+/// Viewport の scroll 位置変化を受け取る delegate。
+///
+/// ghostty が viewport を再描画する度に発火し、画面に見えている行範囲を
+/// scrollback 全体の中での絶対 row index で通知する。
+///
+/// - `total`: viewport + scrollback の総 row 数
+/// - `offset`: viewport の top row index (0..<total-len)
+/// - `len`: viewport の row 数 (= 画面に見えている行数)
+///
+/// apprt 側はこれと cell 高さを組み合わせて、マウス座標 → 絶対 row index への
+/// 変換 (= command block の hover 判定など) を行うことができる。
+@MainActor
+public protocol TerminalSurfaceScrollbarDelegate: TerminalSurfaceViewDelegate {
+    func terminalDidUpdateScrollbar(total: UInt64, offset: UInt64, len: UInt64)
+}

@@ -129,6 +129,44 @@ public final class TerminalSurface {
         return result
     }
 
+    // MARK: - Search
+
+    /// Surface 内検索の操作方向。
+    public enum SearchNavigation {
+        case next
+        case previous
+    }
+
+    /// 検索 UI を開く (needle は未設定)。ghostty は対応する `START_SEARCH` action を
+    /// apprt にフィードバックする。
+    @discardableResult
+    public func startSearch() -> Bool {
+        performBindingAction("start_search")
+    }
+
+    /// 指定した needle で検索を開始 (もしくは置き換え) する。
+    @discardableResult
+    public func search(_ needle: String) -> Bool {
+        performBindingAction("search:\(needle)")
+    }
+
+    /// 検索結果の次 / 前のヒットへ移動する。
+    @discardableResult
+    public func navigateSearch(_ direction: SearchNavigation) -> Bool {
+        switch direction {
+        case .next:
+            performBindingAction("navigate_search:next")
+        case .previous:
+            performBindingAction("navigate_search:previous")
+        }
+    }
+
+    /// 検索を終了する。ghostty は対応する `END_SEARCH` action を apprt にフィードバックする。
+    @discardableResult
+    public func endSearch() -> Bool {
+        performBindingAction("end_search")
+    }
+
     // MARK: - Rendering
 
     func draw() {
